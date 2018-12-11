@@ -1,0 +1,37 @@
+{% extends "_layouts/default.njk" %}
+
+{% block body %}
+  <div class="content">
+    <strong>Olá, {{ user.name }}</strong>
+    <p>Veja seus agendamentos abaixo:</p>
+    <input type="text" class="flatpickr" placeholder="Escolha uma data">
+    <ul class="providers">
+      {% include "schedule/schedule.njk" %}
+    </ul>
+    <a href="/app/dashboard" class="logout">Voltar</a>
+  </div>
+
+    <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function (event) {
+      const date = new Date();
+        fetch(`/app/schedule/appointments?date=${date.getTime()}`).then(function (response) {
+          response.text().then(function (html) {
+            document.querySelector('.providers').innerHTML = html
+          })
+        })
+    });
+
+    flatpickr('.flatpickr', {
+      defaultDate: new Date(),
+      minDate: new Date(),
+      dateFormat: 'd/m/Y',
+      onChange: function (date) {
+        fetch(`/app/schedule/appointments?date=${date[0].getTime()}`).then(function (response) {
+          response.text().then(function (html) {
+            document.querySelector('.providers').innerHTML = html
+          })
+        })
+      }
+    })
+  </script>
+{% endblock %}
